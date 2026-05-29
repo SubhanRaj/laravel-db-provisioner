@@ -14,47 +14,13 @@ A Laravel package that automates local database and user creation for new projec
 
 ## Installation
 
-### Via Composer (Remote Package)
+### Via Composer
 
 ```bash
 composer require subhanraj/laravel-db-provisioner
 ```
 
-### Local Development Setup (Symlink)
-
-For testing before pushing to GitHub:
-
-1. **Clone/Create the package** in a directory parallel to your Laravel projects:
-   ```bash
-   cd ~/Sites
-   git clone <your-repo-url> laravel-local-db-setup
-   # or if you're setting up from scratch
-   ```
-
-2. **In your Laravel project**, add a local repository reference to `composer.json`:
-   ```json
-   {
-       "repositories": [
-           {
-               "type": "path",
-               "url": "../laravel-db-provisioner",
-               "options": {
-                   "symlink": true
-               }
-           }
-       ],
-       "require": {
-           "subhanraj/laravel-db-provisioner": "@dev"
-       }
-   }
-   ```
-
-3. **Install via Composer**:
-   ```bash
-   composer install
-   ```
-
-4. **The package will auto-register** via Laravel's package discovery.
+The package will auto-register via Laravel's package discovery.
 
 ## Usage
 
@@ -161,34 +127,10 @@ DB_PASSWORD=              # Generated securely (16 chars)
 - Check your firewall/antivirus isn't blocking connections
 - Try connecting manually first to isolate the issue
 
-## Publishing & Maintenance
-
-### Local Testing (Optional)
-
-To test the package locally before using in projects:
-
-1. Add to a test Laravel project's `composer.json`:
-   ```json
-   {
-       "repositories": [
-           {
-               "type": "path",
-               "url": "../laravel-db-provisioner",
-               "options": {"symlink": true}
-           }
-       ],
-       "require": {
-           "subhanraj/laravel-db-provisioner": "@dev"
-       }
-   }
-   ```
-
-2. Run `composer install` and test with `php artisan db:provision`
-
 ## License
 
 MIT
 
 ## Support
 
-For issues, questions, or contributions, please open an issue on GitHub.
+For issues, questions, or contributions, please open an issue on GitHub or see [CONTRIBUTING.md](CONTRIBUTING.md).
