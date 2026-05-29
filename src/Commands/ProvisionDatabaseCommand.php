@@ -160,16 +160,13 @@ class ProvisionDatabaseCommand extends Command
      */
     private function refreshEnvironment(): void
     {
-        // Reload .env file
-        if (function_exists('app')) {
-            $app = app();
-            if (method_exists($app, 'make')) {
-                try {
-                    $app['env']->load(base_path('.env'));
-                } catch (Exception $e) {
-                    // Continue anyway - environment should be updated
-                }
+        try {
+            if (class_exists(\Dotenv\Dotenv::class)) {
+                $dotenv = \Dotenv\Dotenv::createMutable(base_path());
+                $dotenv->safeLoad();
             }
+        } catch (\Throwable $e) {
+            // Continue anyway - it's just a fallback
         }
 
         $this->info('✓ Environment variables refreshed');
