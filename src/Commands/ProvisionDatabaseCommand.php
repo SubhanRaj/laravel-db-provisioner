@@ -33,11 +33,12 @@ class ProvisionDatabaseCommand extends Command
             // Step 4: Refresh environment
             $this->refreshEnvironment();
 
-            // Step 5: Get admin password
-            $adminPassword = $this->secret('Enter local MariaDB Admin Password (user: admin)');
+            // Step 5: Get admin credentials
+            $adminUsername = $this->ask('Enter database admin username', 'root');
+            $adminPassword = $this->secret('Enter database admin password (leave blank if none)');
 
             // Step 6: Create database and user via PDO
-            $this->provisionDatabase($dbName, $dbUser, $dbPassword, $adminPassword);
+            $this->provisionDatabase($dbName, $dbUser, $dbPassword, $adminUsername, $adminPassword);
 
             // Step 7: Output success
             $this->outputSuccess($dbName, $dbUser);
@@ -177,21 +178,28 @@ class ProvisionDatabaseCommand extends Command
     /**
      * Provision database using raw PDO
      */
-    private function provisionDatabase(string $dbName, string $dbUser, string $dbPassword, string $adminPassword): void
+    private function provisionDatabase(string $dbName, string $dbUser, string $dbPassword, string $adminUsername, ?string $adminPassword): void
     {
         try {
+            // Get database host and port from environment
+            $dbHost = env('DB_HOST', '127.0.0.1');
+            $dbPort = env('DB_PORT', '3306');
+
+            // Build PDO DSN
+            $dsn = "mysql:host={$dbHost};port={$dbPort}";
+
             // Create PDO connection as admin
             $pdo = new PDO(
-                'mysql:host=127.0.0.1;port=3306',
-                'admin',
-                $adminPassword,
+                $dsn,
+                $adminUsername,
+                $adminPassword ?? '',
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
                 ]
             );
 
-            $this->info('✓ Connected to MariaDB as admin');
+            $this->info("✓ Connected to database as {$adminUsername}");
 
             // Create database
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}`");
